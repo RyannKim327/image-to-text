@@ -20,9 +20,15 @@ module.exports = async (img, oem, psm) => {
 			}
 		} = await worker.recognize(img)
 		await worker.terminate()
-		return text
+		let json = {
+			result: text
+		}
+		return json
 	}catch(e){
 		console.log(`Error [Scan Text on image]: ${e}`)
-		return e
+		let json = {
+			result: e
+		}
+		return json
 	}
 }

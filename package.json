@@ -1,15 +1,28 @@
 {
-  "name": "bash",
-  "version": "1.0.0",
-  "description": "",
+  "name": "pls-img-txt",
+  "version": "0.0.1",
+  "description": "An image to text package with tesseract.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Image to text",
+    "For facebook bots",
+    "Tesseract.js projects"
+  ],
+  "author": "RyannKim327",
   "license": "ISC",
   "dependencies": {
     "tesseract.js": "^2.1.5"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyannKim327/image-to-text.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RyannKim327/image-to-text/issues"
+  },
+  "homepage": "https://github.com/RyannKim327/image-to-text#readme"
 }
