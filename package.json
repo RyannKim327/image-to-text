@@ -1,6 +1,6 @@
 {
   "name": "pls-img-txt",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An image to text package with tesseract.",
   "main": "index.js",
   "scripts": {
