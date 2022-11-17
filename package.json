@@ -14,9 +14,8 @@
   "author": "RyannKim327",
   "license": "ISC",
   "dependencies": {
-    "tesseract.js": "^2.1.5"
+    "tesseract.js": "^3.0.3"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RyannKim327/image-to-text.git"

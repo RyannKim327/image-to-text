@@ -1,6 +1,24 @@
 const { createWorker } = require("tesseract.js")
 
-module.exports = async (img, oem, psm) => {
+const ARABIC = 'ara'
+const CEBUANO = 'ceb'
+const CHINESE_SIMPLIFIED = 'chi_sim'
+const CHINESE_TRADITIONAL = 'chi_tra'
+const GERMAN = 'deu'
+const GREEK = 'ell'
+const FILIPINO = 'fil'
+const HEBREW = 'heb'
+const JAPANESE = 'jpn'
+const KOREAN = 'kor'
+const TAGALOG = 'tgl'
+
+
+let lang = "eng+osd"
+let addLanguage = (languageKey) => {
+	lang = `${languageKey}+${lang}`
+}
+
+let scan = async (img, oem, psm) => {
 	const v_oem = 2
 	const v_psm = 3
 	try{
@@ -8,7 +26,7 @@ module.exports = async (img, oem, psm) => {
 			//logger: m => console.log(`Log: ${m}`)
 		//})
 		await worker.load()
-		await worker.loadLanguage("eng")
+		await worker.loadLanguage(lang)
 		await worker.initialize("eng")
 		await worker.setParameters({
 			tessedit_ocr_engine_mode: v_oem,
@@ -31,4 +49,21 @@ module.exports = async (img, oem, psm) => {
 		}
 		return json
 	}
+}
+
+module.exports = {
+	ARABIC,
+	CEBUANO,
+	CHINESE_SIMPLIFIED,
+	CHINESE_TRADITIONAL,
+	GERMAN,
+	GREEK,
+	FILIPINO,
+	HEBREW,
+	JAPANESE,
+	KOREAN,
+	TAGALOG,
+
+	addLanguage,
+	scan
 }
