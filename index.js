@@ -27,7 +27,7 @@ let scan = async (img, oem, psm) => {
 		//})
 		await worker.load()
 		await worker.loadLanguage(lang)
-		await worker.initialize("eng")
+		await worker.initialize(lang)
 		await worker.setParameters({
 			tessedit_ocr_engine_mode: v_oem,
             tessedit_pageseg_mode: v_psm,
