@@ -1,4 +1,6 @@
 const { createWorker } = require("tesseract.js")
+const cli_pro = require("cli-progress")
+const colors = require("ansi-colors")
 
 const ARABIC = 'ara'
 const CEBUANO = 'ceb'
@@ -18,13 +20,24 @@ let addLanguage = (languageKey) => {
 	lang = `${languageKey}+${lang}`
 }
 
-let scan = async (img, oem, psm) => {
-	const v_oem = 2
-	const v_psm = 3
+let scan = async (imgPath, ocr_engine_mode = 2, pageseg_mode = 3) => {
+	const v_oem = 2 | ocr_engine_mode
+	const v_psm = 3 | pageseg_mode
 	try{
-		let worker = createWorker()
-			//logger: m => console.log(`Log: ${m}`)
-		//})
+		let worker = createWorker({
+			logger: m => {
+				const bar1 = new cli_pro.SingleBar({
+					format: `${colors.bgBlack('{bar}')} Log [${Math.round(m.progress * 100)}%]: ${m.status}`,
+					barCompleteChar: "\u2588",
+					barIncompleteChar: "\u2591",
+					hideCursor: true
+				}, cli_pro.Presets.legacy)
+				bar1.start(100, 0)
+				bar1.increment()
+				bar1.update(m.progress * 100)
+				bar1.stop()
+			}
+		})
 		await worker.load()
 		await worker.loadLanguage(lang)
 		await worker.initialize(lang)
@@ -36,7 +49,7 @@ let scan = async (img, oem, psm) => {
 			data: {
 				text
 			}
-		} = await worker.recognize(img)
+		} = await worker.recognize(imgPath)
 		await worker.terminate()
 		let json = {
 			result: text
