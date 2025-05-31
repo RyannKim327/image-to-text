@@ -1,19 +1,28 @@
-# Image to Text
-### MPOP Reverse II
+<h3 align="center">Image to Text</h3>
+<h4 align="center">MPOP Reverse II</h4>
+
 
 ### How to install
 ``` Bash
 npm install pls-img-txt
 ```
 
-### How to use (scan) .scan(imagePath [, ocr_engine_mode] [, pageseg_mode])
-> The OCR (Optical Character Recognition) Engine Mode is one part of this project from its first release. [**According to IBM**](https://www.ibm.com/cloud/blog/optical-character-recognition), Optical character recognition (OCR) is sometimes referred to as text recognition. An OCR program extracts and repurposes data from scanned documents, camera images and image-only pdfs. OCR software singles out letters on the image, puts them into words and then puts the words into sentences, thus enabling access to and editing of the original content. It also eliminates the need for manual data entry. The Page segmentation mode defines how your text should be treated by Tesseract. For example, if your image contains a single character or a block of text, you want to specify the corresponding psm so that you can improve accuracy. [**According to David Sixela**](https://groups.google.com/g/tesseract-ocr/c/N-7-lLrx5bw). This two are now added as customized options in this project, it is still optional for developers to user with the default value of ocr_engine_mode = 2 and pageseg_mode = 3.
+### How to use (extractText) .extractText(image_path: string, debugging?: boolean, ocr_engine_mode?: OEM, pageseg_mode?: PSM): Promise<Function>
+> The OCR (Optical Character Recognition) Engine Mode is one part of this project from its first release.
+[**According to IBM**](https://www.ibm.com/cloud/blog/optical-character-recognition),
+Optical character recognition (OCR) is sometimes referred to as text recognition.
+An OCR program extracts and repurposes data from scanned documents, camera images and image-only pdfs.
+OCR software singles out letters on the image, puts them into words and then puts the words into sentences,
+thus enabling access to and editing of the original content.
+It also eliminates the need for manual data entry. The Page segmentation mode defines how your text should be treated by Tesseract.
+For example, if your image contains a single character or a block of text, you want to specify the corresponding psm so that you can improve accuracy.
+[**According to David Sixela**](https://groups.google.com/g/tesseract-ocr/c/N-7-lLrx5bw).
 
 ``` NodeJS
-const { scan } = require("pls-img-txt")
+const extractText = require("pls-img-txt")
 
 let run = async () => {
-	let output = await scan("./sampleimg.png")
+	let output = await extractText("./sampleimg.png")
 	// await scan("./sampleimg.png", 2, 3)
 	// This is just optional
 	console.log(output)
@@ -32,18 +41,17 @@ run()
 ### How to use (Add language) .addLanguage([language])
 > This feature is just optional, this package has already default installed languages which are english and the orientation and script detection (osd).
 ``` NodeJS
-const pls_img_txt = require("pls-img-txt")
+const extractText, {addLanguage, CEBUANO, FILIPINO, TAGALOG} = require("pls-img-txt")
 
 let run = async () => {
-	pls_img_txt.addLanguage(pls_img_txt.CEBUANO)
-	pls_img_txt.addLanguage(pls_img_txt.FILIPINO)
-	pls_img_txt.addLanguage(pls_img_txt.TAGALOG)
-	let output = await pls_img_txt.scan("./sampleimg.png")
+	addLanguage(CEBUANO)
+	addLanguage(FILIPINO)
+	addLanguage(TAGALOG)
+	let output = await extractText("./sampleimg.png")
 	console.log(output)
 }
 
 run()
-
 ```
 
 > Add language is still in development, so that this feature might not be stable. Try to add some try catch to handle this kind of error and to avoid some crash on to your system.
@@ -61,7 +69,8 @@ run()
 * KOREAN
 * TAGALOG
 
-> For more language, kindly visit [this link](https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html), and use the key language to add.
+> For more language, kindly visit [this link](https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html),
+and use the key language to add.
 
 ---
 ### Credits
