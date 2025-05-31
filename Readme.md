@@ -7,7 +7,8 @@
 npm install pls-img-txt
 ```
 
-### How to use (extractText) .extractText(image_path: string, debugging?: boolean, ocr_engine_mode?: OEM, pageseg_mode?: PSM): Promise<Function>
+---
+### Introduction
 > The OCR (Optical Character Recognition) Engine Mode is one part of this project from its first release.
 [**According to IBM**](https://www.ibm.com/cloud/blog/optical-character-recognition),
 Optical character recognition (OCR) is sometimes referred to as text recognition.
@@ -17,6 +18,8 @@ thus enabling access to and editing of the original content.
 It also eliminates the need for manual data entry. The Page segmentation mode defines how your text should be treated by Tesseract.
 For example, if your image contains a single character or a block of text, you want to specify the corresponding psm so that you can improve accuracy.
 [**According to David Sixela**](https://groups.google.com/g/tesseract-ocr/c/N-7-lLrx5bw).
+
+### How to use (extractText) .extractText(image_path: string, debugging?: boolean, ocr_engine_mode?: OEM, pageseg_mode?: PSM): Promise< Function >
 
 ``` NodeJS
 const extractText = require("pls-img-txt")
