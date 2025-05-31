@@ -1,9 +1,14 @@
 {
   "name": "pls-img-txt",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "An image to text package with tesseract.",
-  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "tsx src/test"
   },
   "keywords": [
@@ -19,6 +24,7 @@
     "tesseract.js": "^3.0.3"
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
     "@types/node": "^22.15.29",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

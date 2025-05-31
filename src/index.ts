@@ -1,7 +1,7 @@
 import { createWorker, OEM, PSM } from "tesseract.js";
 import { Presets, SingleBar } from "cli-progress";
 import { bgBlack } from "ansi-colors";
-import { LANGUAGE } from "./types";
+import { LANGUAGE, PLS } from "./types";
 import { existsSync } from "fs";
 
 const ARABIC: LANGUAGE = "ara";
@@ -27,7 +27,7 @@ export default async function extractText(
   debugging?: boolean,
   ocr_engine_mode?: OEM,
   pageseg_mode?: PSM,
-): Promise<Function> {
+): Promise<PLS> {
   if (!ocr_engine_mode) {
     ocr_engine_mode = OEM.DEFAULT;
   }
@@ -53,7 +53,7 @@ export default async function extractText(
             Presets.legacy,
           );
           bar.start(100, 0);
-          bar.update();
+          bar.update(0);
           bar.stop();
         }
       },
