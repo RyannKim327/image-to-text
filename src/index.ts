@@ -3,6 +3,7 @@ import { Presets, SingleBar } from "cli-progress";
 import { bgBlack } from "ansi-colors";
 import { LANGUAGE, PLS } from "./types";
 import { existsSync } from "fs";
+import { Jimp, JimpMime } from "jimp";
 
 const ARABIC: LANGUAGE = "ara";
 const CEBUANO: LANGUAGE = "ceb";
@@ -40,6 +41,13 @@ export default async function extractText(
     };
   }
   try {
+    const img = await Jimp.read(image_path);
+    img.greyscale();
+    img.contrast(1);
+    img.normalize();
+
+    const buff = await img.getBuffer(JimpMime.png);
+
     const worker = createWorker({
       logger: (m) => {
         if (debugging) {
@@ -67,7 +75,7 @@ export default async function extractText(
     });
     const {
       data: { text },
-    } = await worker.recognize(image_path);
+    } = await worker.recognize(buff);
     await worker.terminate();
     return {
       result: text,
