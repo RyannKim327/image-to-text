@@ -1,4 +1,4 @@
-<h3 align="center">Image to Text</h3>
+<h3 align="center">Image to Text (Text Extractor)</h3>
 <h4 align="center">MPOP Reverse II</h4>
 
 
@@ -19,10 +19,10 @@ It also eliminates the need for manual data entry. The Page segmentation mode de
 For example, if your image contains a single character or a block of text, you want to specify the corresponding psm so that you can improve accuracy.
 [**According to David Sixela**](https://groups.google.com/g/tesseract-ocr/c/N-7-lLrx5bw).
 
-### How to use (extractText) .extractText(image_path: string, debugging?: boolean, ocr_engine_mode?: OEM, pageseg_mode?: PSM): Promise< Function >
+### How to use (extractText) .extractText(image_path: string, options?: XTRACT_OPTIONS): Promise< XTRACT >
 
 ``` NodeJS
-const extractText = require("pls-img-txt")
+const extractText = require("xtract-txt")
 
 let run = async () => {
 	let output = await extractText("./sampleimg.png")
@@ -41,10 +41,23 @@ run()
 }
 ```
 
+**Here are the parameters from the options?: XTRACT_OPTIONS parameter. All the keys are optional, meaning not require.**
+
+| Key | Datatype |
+| :-- | --: |
+| debugging | boolean |
+| grayscale | boolean |
+| contrast | number |
+| normalized | boolean |
+| posterized | number |
+| ocr_engine_mode | OEM |
+| pageseg_mode | PSM |
+| save_image_path | file_path.extension |
+
 ### How to use (Add language) .addLanguage(language: string)
 > This feature is just optional, this package has already default installed languages which are english and the orientation and script detection (osd).
 ``` NodeJS
-const extractText, {addLanguage, CEBUANO, FILIPINO, TAGALOG} = require("pls-img-txt")
+const extractText, {addLanguage, CEBUANO, FILIPINO, TAGALOG} = require("xtract-txt")
 
 let run = async () => {
 	addLanguage(CEBUANO)

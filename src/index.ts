@@ -1,7 +1,7 @@
 import { createWorker, OEM, PSM } from "tesseract.js";
 import { Presets, SingleBar } from "cli-progress";
 import { bgBlack } from "ansi-colors";
-import { LANGUAGE, XTRACT } from "./types";
+import { LANGUAGE, XTRACT, XTRACT_OPTIONS } from "./types";
 import { existsSync } from "fs";
 import { Jimp, JimpMime } from "jimp";
 
@@ -25,36 +25,24 @@ const addLanguage: Function = (language: LANGUAGE) => {
 
 export default async function extractText(
   image_path: string,
-  debugging?: boolean | string,
-  ocr_engine_mode?: OEM | string,
-  pageseg_mode?: PSM | string,
-  save_image_path?: `${string}.${string}`,
+  options?: XTRACT_OPTIONS,
 ): Promise<XTRACT> {
-  if (typeof debugging === "string") {
-    save_image_path = debugging;
-    debugging = false;
+  if (!options) {
+    options = {
+      ocr_engine_mode: OEM.DEFAULT,
+      pageseg_mode: PSM.AUTO,
+    };
   }
-
-  if (typeof ocr_engine_mode === "string") {
-    save_image_path = ocr_engine_mode;
-    ocr_engine_mode = OEM.DEFAULT;
+  if (!options.ocr_engine_mode) {
+    options.ocr_engine_mode = OEM.DEFAULT;
   }
-
-  if (typeof pageseg_mode === "string") {
-    save_image_path = pageseg_mode;
-    pageseg_mode = PSM.AUTO;
-  }
-
-  if (!ocr_engine_mode) {
-    ocr_engine_mode = OEM.DEFAULT;
-  }
-  if (!pageseg_mode) {
-    pageseg_mode = PSM.AUTO;
+  if (!options.pageseg_mode) {
+    options.pageseg_mode = PSM.AUTO;
   }
 
   const worker = createWorker({
     logger: (m) => {
-      if (debugging) {
+      if (options.debugging) {
         const progress = Math.round(m.progress * 100);
         const bar = new SingleBar(
           {
@@ -74,25 +62,27 @@ export default async function extractText(
   });
 
   try {
-    if (!existsSync(image_path)) {
-      throw Error("Image doesn't exists");
-    }
+    // INFO: Image file existence checker
+    if (!existsSync(image_path)) throw Error("Image doesn't exists");
+
+    // TODO: Image modifier based on the user preference
     const img = await Jimp.read(image_path);
-    img.greyscale();
-    img.contrast(1);
-    img.normalize();
-    img.posterize(2);
-    if (save_image_path) {
-      img.write(save_image_path);
-    }
+    if (options.grayscale) img.greyscale();
+    if (options.contrast) img.contrast(options.contrast);
+    if (options.normalized) img.normalize();
+    if (options.posterized) img.posterize(options.posterized);
+    if (options.save_image_path) img.write(options.save_image_path);
+
+    // TODO: To extract the image as new and use for scanning.
     const buff = await img.getBuffer(JimpMime.png);
 
+    // TODO: A task for a worker to do his work
     await worker.load();
     await worker.loadLanguage(lang);
     await worker.initialize(lang);
     await worker.setParameters({
-      tessedit_ocr_engine_mode: ocr_engine_mode,
-      tessedit_pageseg_mode: pageseg_mode,
+      tessedit_ocr_engine_mode: options.ocr_engine_mode,
+      tessedit_pageseg_mode: options.pageseg_mode,
     });
 
     const {
@@ -103,14 +93,14 @@ export default async function extractText(
       result: text,
     };
   } catch (error) {
-    if (debugging) {
-      console.log(error);
-    }
+    if (options.debugging) console.log(error);
+
     return {
       result: `There's a problem, please try again.`,
       error: error,
     };
   } finally {
+    // TODO: To terminate the worker whatever happens.
     await worker.terminate();
   }
 }
@@ -130,4 +120,26 @@ export {
   JAPANESE,
   KOREAN,
   TAGALOG,
+  OEM,
+  PSM,
+  // // INFO: OEM
+  // OEM.DEFAULT,
+  // OEM.LSTM_ONLY,
+  // OEM.TESSERACT_ONLY,
+  // OEM.TESSERACT_LSTM_COMBINED,
+  // // INFO: PSM
+  // PSM.AUTO,
+  // PSM.AUTO_OSD,
+  // PSM.OSD_ONLY,
+  // PSM.RAW_LINE,
+  // PSM.AUTO_ONLY,
+  // PSM.CIRCLE_WORD,
+  // PSM.SINGLE_CHAR;,
+  // PSM.SINGLE_LINE,
+  // PSM.SINGLE_WORD,
+  // PSM.SPARSE_TEXT,
+  // PSM.SINGLE_BLOCK,
+  // PSM.SINGLE_COLUMN,
+  // PSM.SPARSE_TEXT_OSD,
+  // PSM.SINGLE_BLOCK_VERT_TEXT,
 };
