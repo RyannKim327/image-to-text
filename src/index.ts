@@ -1,7 +1,7 @@
 import { createWorker, OEM, PSM } from "tesseract.js";
 import { Presets, SingleBar } from "cli-progress";
 import { bgBlack } from "ansi-colors";
-import { LANGUAGE, PLS } from "./types";
+import { LANGUAGE, XTRACT } from "./types";
 import { existsSync } from "fs";
 import { Jimp, JimpMime } from "jimp";
 
@@ -19,54 +19,74 @@ const TAGALOG: LANGUAGE = "tgl";
 
 let lang: string = "eng+osd";
 
-const addLanguage: Function = (languageKey: LANGUAGE) => {
-  lang = `${languageKey}+${lang}`;
+const addLanguage: Function = (language: LANGUAGE) => {
+  lang = `${language}+${lang}`;
 };
 
 export default async function extractText(
   image_path: string,
-  debugging?: boolean,
-  ocr_engine_mode?: OEM,
-  pageseg_mode?: PSM,
-): Promise<PLS> {
+  debugging?: boolean | string,
+  ocr_engine_mode?: OEM | string,
+  pageseg_mode?: PSM | string,
+  save_image_path?: `${string}.${string}`,
+): Promise<XTRACT> {
+  if (typeof debugging === "string") {
+    save_image_path = debugging;
+    debugging = false;
+  }
+
+  if (typeof ocr_engine_mode === "string") {
+    save_image_path = ocr_engine_mode;
+    ocr_engine_mode = OEM.DEFAULT;
+  }
+
+  if (typeof pageseg_mode === "string") {
+    save_image_path = pageseg_mode;
+    pageseg_mode = PSM.AUTO;
+  }
+
   if (!ocr_engine_mode) {
     ocr_engine_mode = OEM.DEFAULT;
   }
   if (!pageseg_mode) {
     pageseg_mode = PSM.AUTO;
   }
-  if (!existsSync(image_path)) {
-    return {
-      result: "Image doesn't exists",
-    };
-  }
+
+  const worker = createWorker({
+    logger: (m) => {
+      if (debugging) {
+        const progress = Math.round(m.progress * 100);
+        const bar = new SingleBar(
+          {
+            format: `${bgBlack("{bar}")} Log [${progress}%]: ${m.status}`,
+            barCompleteChar: "\u2588",
+            barIncompleteChar: "\u2591",
+            hideCursor: true,
+          },
+          Presets.shades_classic,
+        );
+        bar.start(100, 0);
+        bar.increment(1);
+        bar.update(progress);
+        bar.stop();
+      }
+    },
+  });
+
   try {
+    if (!existsSync(image_path)) {
+      throw Error("Image doesn't exists");
+    }
     const img = await Jimp.read(image_path);
     img.greyscale();
     img.contrast(1);
     img.normalize();
     img.posterize(2);
-    // img.write("test1.png");
+    if (save_image_path) {
+      img.write(save_image_path);
+    }
     const buff = await img.getBuffer(JimpMime.png);
 
-    const worker = createWorker({
-      logger: (m) => {
-        if (debugging) {
-          const bar = new SingleBar(
-            {
-              format: `${bgBlack("{bar}")} Log [${Math.round(m.progress * 100)}%]: ${m.status}`,
-              barCompleteChar: "\u2588",
-              barIncompleteChar: "\u2591",
-              hideCursor: true,
-            },
-            Presets.legacy,
-          );
-          bar.start(100, 0);
-          bar.update(0);
-          bar.stop();
-        }
-      },
-    });
     await worker.load();
     await worker.loadLanguage(lang);
     await worker.initialize(lang);
@@ -74,10 +94,11 @@ export default async function extractText(
       tessedit_ocr_engine_mode: ocr_engine_mode,
       tessedit_pageseg_mode: pageseg_mode,
     });
+
     const {
       data: { text },
     } = await worker.recognize(buff);
-    await worker.terminate();
+
     return {
       result: text,
     };
@@ -86,8 +107,11 @@ export default async function extractText(
       console.log(error);
     }
     return {
-      result: `There's a problem, please try again. ${error}`,
+      result: `There's a problem, please try again.`,
+      error: error,
     };
+  } finally {
+    await worker.terminate();
   }
 }
 

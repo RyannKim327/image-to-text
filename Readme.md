@@ -41,7 +41,7 @@ run()
 }
 ```
 
-### How to use (Add language) .addLanguage([language])
+### How to use (Add language) .addLanguage(language: string)
 > This feature is just optional, this package has already default installed languages which are english and the orientation and script detection (osd).
 ``` NodeJS
 const extractText, {addLanguage, CEBUANO, FILIPINO, TAGALOG} = require("pls-img-txt")
