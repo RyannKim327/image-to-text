@@ -45,7 +45,8 @@ export default async function extractText(
     img.greyscale();
     img.contrast(1);
     img.normalize();
-
+    img.posterize(2);
+    // img.write("test1.png");
     const buff = await img.getBuffer(JimpMime.png);
 
     const worker = createWorker({

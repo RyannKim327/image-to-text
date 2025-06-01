@@ -4,7 +4,7 @@
 
 ### How to install
 ``` Bash
-npm install pls-img-txt
+npm install xtract-txt
 ```
 
 ---
@@ -80,3 +80,4 @@ and use the key language to add.
 1. Tesseract.js
 2. [cli-progress](https://www.npmjs.com/package/cli-progress)
 3. [ansi-colors](https://www.npmjs.com/package/ansi-colors)
+4. [Jimp](https://www.npmjs.com/package/jimp)
