@@ -1,6 +1,8 @@
 <h3 align="center">Image to Text (Text Extractor)</h3>
 <h4 align="center">MPOP Reverse II</h4>
 
+Kunyare may bago
+
 
 ### How to install
 ``` Bash
